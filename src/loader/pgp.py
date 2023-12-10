@@ -1,7 +1,8 @@
 import networkx as nx
 import tempfile
 from pathlib import Path
-from .graph_loader import DATA_PATH, GraphLoader
+from .graph_loader import GraphLoader
+from util.paths import DATA_PATH
 
 
 class Loader(GraphLoader):

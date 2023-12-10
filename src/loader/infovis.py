@@ -1,6 +1,7 @@
 import networkx as nx
 
-from . graph_loader import GraphLoader, DATA_PATH
+from . graph_loader import GraphLoader
+from util.paths import DATA_PATH
 
 class Loader(GraphLoader):
     path = DATA_PATH / "infovis_large.gml"
