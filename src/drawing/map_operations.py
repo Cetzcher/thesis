@@ -5,21 +5,26 @@ from PIL import Image
 def size(arrmap):
     return np.shape(arrmap)[0]
 
+
 def is_square(arrmap):
     x, y, *_ = np.shape(arrmap)
     return x == y
 
+
 def normalize(arrmap):
     return arrmap / np.max(arrmap)
 
+
 def invert(arrmap):
     return np.abs(arrmap - 1)
+
 
 def to_byte(arrmap):
     arrmap[arrmap > 1] = 1.0
     arrmap = arrmap * ((2 ** 8) - 1)
     arrmap = arrmap.astype(np.uint8)
     return arrmap
+
 
 def to_palette(arrmap, palette):
     # palette should be a sorted list of lists in the form
@@ -47,7 +52,6 @@ def set_gradient_colors(mapref, arrmap, color, cutoff_low=0.5, cutoff_high=0.6, 
     cpy[(g >= cutoff_low) & (g < cutoff_high)] = color
     return cpy
     
-
 
 def write(arrmap, path, mode="L"):
     im = Image.fromarray(arrmap)
