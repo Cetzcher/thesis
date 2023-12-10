@@ -1,55 +1,20 @@
 import networkx as nx
 import numpy as np
 import random
-import math
 import copy
+from graph.util import remap_tuple_dict, reverse_mapping, reweigh_graph
+from util import RANDOM as R
 
-R = random.Random(100)
 np.random.seed(100)
 
+# name of the key that stores the weight.
 W_KEY = "weight"
+
+# name of the key that stores the avg_len of a path to a specific node
 AVG_LEN_KEY = "avg_len"
+
+# name of the key that stores the PR value of the specific node.
 PROB_KEY = "probability"
-
-
-def remap_tuple_dict(d: dict):
-    return [{'key':k, 'value': v} for k, v in d.items()]
-
-def reverse_mapping(d: list[dict]):
-    out = {}
-    for item in d:
-        out[tuple(item["key"])] = item["value"]
-
-def generate_directed_graph(node_count=100, mean_num_connections=3, connection_std=1):
-    G = nx.DiGraph()
-    for i in range(node_count):
-        G.add_node(i, color=f"#000000")
-        connections = np.random.normal(loc=mean_num_connections, scale=connection_std)
-        connections = math.ceil(connections)
-        for _ in range(connections):
-            # choose which node we connect to
-            target = i
-            weight = R.random()
-            while target == i:  # reroll loops
-                target = R.randint(0, node_count)
-            if target > i:
-                G.add_node(target, color=f"#000000")
-            G.add_edge(i, target, weight=weight, color="black", edge_type="normal")
-    return G
-
-def reweigh_graph(graph, use_self_loops):
-    for node in graph.nodes:
-        out_edges = graph.out_edges(node, data=True)
-        weight_sum = 0
-        for u, v, data in out_edges:
-            weight_sum += data["weight"]
-        if use_self_loops and weight_sum < 1:
-            graph.add_edge(node, node, weight=1 - weight_sum)
-        elif weight_sum > 1 or not use_self_loops: # adjust all out edge weight if sum of weights is
-            for u, v, data in out_edges:
-                    data["weight"] = data["weight"] / weight_sum
-        
-            
 
 class Graph:
 
@@ -71,6 +36,8 @@ class Graph:
             self.__aggregated_graph = self.__aggregate_graph()
             self.__compute_total_prob()
 
+    def __str__(self) -> str:
+        return f"Source graph: {self.G}, Aggregated Graph: {self.agg}"
 
     def Pr(self, nodes) -> float:
         try:
@@ -211,6 +178,7 @@ class Graph:
                     continue
                 G.add_edge(start, goal, weight=self.probability_along_path(nodes_between, self.__raw))
         
+        reweigh_graph(G, True)
         return G
         for start in paths.keys():
             for end in paths[start].keys():
