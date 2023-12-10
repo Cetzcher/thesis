@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
-
+import math
+from util import RANDOM as R
 
 def generate_directed_graph(node_count=100, mean_num_connections=3, connection_std=1):
     """Generate a directed graph with the given number of nodes
