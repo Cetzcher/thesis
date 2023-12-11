@@ -19,7 +19,18 @@ class Image:
             self.__data = init_data 
 
     def save(self, path):
-        ops.write(self.data, path)
+        #ops.write(self.data, path)
+        dim = self.__data.shape[-1] 
+        if dim == 4:
+            c_red, c_green, c_blue, c_alpha = cv2.split(self.__data)
+            mat = cv2.merge((c_blue, c_green, c_red, c_alpha))
+        elif dim == 3:
+            c_red, c_green, c_blue = cv2.split(self.__data)
+            mat = cv2.merge((c_blue, c_green, c_red))
+
+        else:
+            mat = self.__data
+        cv2.imwrite(path, mat)
 
     @property
     def data(self):
@@ -55,10 +66,23 @@ class Image:
             is_byte=True,
             is_rgb=True
         )
+    
+    def as_alpha(self):
+        assert self.__is_rgb
+        c_red, c_green, c_blue = cv2.split(self.__data)
+        alpha = np.ones((self.__size, self.__size), np.uint8) * 255
+        rgba = cv2.merge((c_red, c_green, c_blue, alpha))
+        return Image(
+            size=self.__size,
+            init_data=rgba,
+            is_byte=True,
+            is_rgb=True
+        )
+    
 
     def __validate_value(self, value):
         if self.__is_rgb:
-            assert len(value) == 3
+            assert len(value) == 3 or len(value) == 4
         elif self.__is_byte:
             assert value >= 0 and value <= 255
         else:

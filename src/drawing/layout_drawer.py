@@ -1,8 +1,11 @@
 from __future__ import annotations
+import cv2
 from typing import TYPE_CHECKING
 from drawing.image import Image
 import numpy as np
+from drawing.map_operations import invert, to_byte
 from drawing.color_palettes import seaborn_like_128
+from layout.base import Layout
 
 if TYPE_CHECKING:
     from layout.base import Layout
@@ -20,6 +23,7 @@ class LayoutDrawer:
 
     def draw(self):
         pos: dict = self.layout.layout()
+        assert isinstance(pos, dict), pos
         graph = self.layout.graph
         image = self.init_image()
         if self.draw_nodes:
@@ -58,8 +62,31 @@ class HillLayoutDrawer(LayoutDrawer):
         return Image(self.layout.size, init_data=scaled).as_byte_image().as_pallete(seaborn_like_128)
 
     def draw_edge(self, image, start, end, weight):
-        image.line(start, end, [0, 0, 0])
+        image.line(start, end, [0, 0, 0, 3])
 
     def draw_node(self, image, position):
         x, y = position
-        image.circle((x, y), self.layout.size // 100, [0, 0, 0])
+        image.circle((x, y), 0, [0, 0, 0, 10])
+
+
+class AlphaHillLayoutDrawer(LayoutDrawer):
+
+    def __init__(self, layout: Layout, draw_nodes=True, draw_edges=True, draw_lables=True) -> None:
+        super().__init__(layout, draw_nodes, draw_edges, draw_lables)
+        self.__hill_drawer = HillLayoutDrawer(layout, False, False, False)
+        self.__drawer = LayoutDrawer(layout, draw_nodes, draw_edges, draw_lables)
+
+    def draw(self):
+        nodes = self.__drawer.draw().data
+        inv = to_byte(invert(nodes))
+        nodes_mat = cv2.merge((inv, inv, inv))
+        hills = self.__hill_drawer.draw().data
+        alpha = 0.75
+        beta = 1 - alpha
+        out = cv2.addWeighted(hills, alpha, nodes_mat, beta, 0.0)
+        return Image(
+            self.layout.size,
+            init_data=out,
+            is_byte=True,
+            is_rgb=True
+        )

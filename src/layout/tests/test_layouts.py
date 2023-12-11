@@ -1,9 +1,9 @@
 from layout.best_fit_markov_layout import BestFitMarkovLayout
-from layout.random_walk_layout import RandomWalkLayout
 from layout.random_layout import RandomLayout
 from layout.traditional_spring_layout import TraditionalSpringLayout
+from layout.random_hill_layout import RandomHillLayout
 from layout.spring_layout import SpringHillLayout
-from drawing.layout_drawer import LayoutDrawer, HillLayoutDrawer
+from drawing.layout_drawer import LayoutDrawer, HillLayoutDrawer, AlphaHillLayoutDrawer
 from util.paths import OUT_PATH
 from graph.graph import Graph
 from loader import ramp
@@ -25,20 +25,13 @@ def test_random_layout():
     im.as_byte_image().save(str(OUT_PATH / "random_layout.png"))
 
 
-def test_random_walk_layout():
+def test_random_hill_layout():
     g = Graph(ramp.Loader().load())
-    layout = RandomWalkLayout(g, 256)
-    drawer = HillLayoutDrawer(layout)
+    layout = RandomHillLayout(g, 256)
+    drawer = HillLayoutDrawer(layout, draw_edges=False, draw_nodes=True)
     im = drawer.draw()
-    im.as_byte_image().save(str(OUT_PATH / "random_walk_layout.png"))
+    im.as_byte_image().save(str(OUT_PATH / "random_hill_layout.png"))
 
-
-def test_expectation_mean_layout():
-    g = Graph(ramp.Loader().load())
-    layout = RandomWalkLayout(g, 256)
-    drawer = HillLayoutDrawer(layout)
-    im = drawer.draw()
-    im.as_byte_image().save(str(OUT_PATH / "expectation_mean_layout.png"))
 
 
 def test_spring_layout():

@@ -12,5 +12,4 @@ def circle(data, center, radius, value, interpolation_function=None):
     dist = np.sqrt((X - center[0]) ** 2 + (Y - center[1]) ** 2)
     gain = value * 1 / interpolation_function(dist + 1)
     gain[dist > radius] = 0
-    print(gain)
     data += gain
