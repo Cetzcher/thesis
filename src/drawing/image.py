@@ -73,4 +73,5 @@ class Image:
         cv2.circle(self.data, center, radius, value, thickness=-1)
 
 
-
+    def text(self, postion, text, value):
+        pass

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>pydeck</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script src='https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@~8.8.*/dist/index.js'></script>
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#deck-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#deck-container canvas {
+  z-index: 1;
+  background: none;
+}
+    </style>
+  </head>
+  <body>
+    <div id="deck-container">
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById('deck-container');
+    const jsonInput = {
+  "initialViewState": {
+    "bearing": 140,
+    "latitude": 1,
+    "longitude": -1.18,
+    "pitch": 60,
+    "zoom": 1.5
+  },
+  "layers": [
+    {
+      "@@type": "TerrainLayer",
+      "elevationData": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      "elevationDecoder": {
+        "bScaler": 0.00390625,
+        "gScaler": 1,
+        "offset": -32768,
+        "rScaler": 256
+      },
+      "id": "25cf0380-cd0f-4198-939f-0c202b05087c",
+      "texture": "data:image/png;base64,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"
+    }
+  ],
+  "mapStyle": "dark",
+  "views": [
+    {
+      "@@type": "OrbitView",
+      "controller": true
+    }
+  ]
+};
+    const tooltip = true;
+    const customLibraries = null;
+    const configuration = null;
+
+    const deckInstance = createDeck({
+                  container,
+      jsonInput,
+      tooltip,
+      customLibraries,
+      configuration
+    });
+
+  </script>
+</html>

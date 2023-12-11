@@ -16,7 +16,7 @@ def test_draw_primitives():
 
 def test_draw_pallettization():
     im = Image(
-        size=128
+        size=256
     )
 
     im.line((0, 0), (128, 128), 0.5, thickness=3)
