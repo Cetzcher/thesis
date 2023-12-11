@@ -37,7 +37,7 @@ class SpringHillLayout(HeightMapLayout):
 
         for node, pos in pos.items():
             pr = self.graph.Pr(node)
-            radius = (self.size * pr) // 4
+            radius = (self.size * pr) // 1
             hm_pos = scale_pos(pos)
             circle(self._height_map, hm_pos, radius, pr * 100)           
             out[node] = hm_pos

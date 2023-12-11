@@ -41,10 +41,13 @@ class Graph:
 
     def Pr(self, nodes) -> float:
         try:
-            acc = 0
-            for n in nodes:
-                acc += self.probabilites[n]
-            return acc / len(nodes)
+            if isinstance(nodes, (tuple, list)):
+                acc = 0
+                for n in nodes:
+                    acc += self.probabilites[n]
+                return acc / len(nodes)
+            else:
+                return self.__probabilites[nodes]
         except TypeError:
             return self.__probabilites[nodes]
 
