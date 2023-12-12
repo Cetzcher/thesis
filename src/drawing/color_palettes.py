@@ -52,4 +52,8 @@ seaborn_like_128 = [[start, end, hsl(*vals)] for (start, end, vals) in palletize
         0, 255, (215/360, 0.99, 0.99), (215/360, 0.99, 0.5), 128, interpolation_mode=INTERPOLATE_LIGHTNESS
         )]
 
+seaborn_like_250 = [[start, end, hsl(*vals)] for (start, end, vals) in palletize(
+        0, 255, (215/360, 0.99, 0.99), (215/360, 0.99, 0.5), 250, interpolation_mode=INTERPOLATE_LIGHTNESS
+        )]
+
 grayscale = [[a, b, c] for a, b, c in palletize(0, 255, (0, 0, 0), (255, 255, 255), interpolation_mode=INTERPOLATE_ALL, num_buckets=6)]

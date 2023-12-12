@@ -13,3 +13,9 @@ def circle(data, center, radius, value, interpolation_function=None):
     gain = value * 1 / interpolation_function(dist + 1)
     gain[dist > radius] = 0
     data += gain
+
+def rect(data, center, size, value):
+    x, y = center
+    min_x, min_y = int(x - size), int(y - size)
+    max_x, max_y = int(x + size), int(y + size)
+    data[min_y:max_y, min_x:max_x] = value

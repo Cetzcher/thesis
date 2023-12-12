@@ -94,7 +94,11 @@ class Image:
     
     def circle(self, center, radius, value):
         self.__validate_value(value)
-        cv2.circle(self.data, center, radius, value, thickness=-1)
+        try:
+            cv2.circle(self.data, center, radius, value, thickness=-1)
+        except cv2.error:
+            print(f"Error upon call of circle with center = {center}, r={radius}, value={value}")
+            raise
 
 
     def text(self, postion, text, value):

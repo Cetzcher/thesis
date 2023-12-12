@@ -6,6 +6,9 @@ class ExpecationMeanLayout(HeightMapLayout):
     def mean(self, nodes): 
         """Computes the mean of the bunch of nodes"""
         return sum(map(lambda n: self.__graph.probabilites[n], nodes)) / len(nodes)
+    
+    def radius_from_prob(self, prob):
+        return (self.size * prob) // 2
 
     def compute_influence(self, x, y, nodes):
         if not self.in_bounds(x, y):
@@ -43,10 +46,11 @@ class ExpecationMeanLayout(HeightMapLayout):
     def layout(self) -> dict:
         
         # put all nodes at random positions at first.
+        self._pos = dict()
         for node in self.graph.G.nodes:
-            self._pos[node] = random_position()
+            self._pos[node] = (self.size//2, self.size//2)
         
-        MAX_ITER = 1000
+        MAX_ITER = 10
         for i in range(MAX_ITER):
             for node in self.graph.G.nodes:
                 print("Tweak ", node)

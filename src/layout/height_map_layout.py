@@ -10,4 +10,4 @@ class HeightMapLayout(Layout):
         self._height_map = np.zeros((size, size), np.float64)
     
     def in_bounds(self, x, y):
-        return x == clamp(x, 0, self.size) and y == clamp(x, 0, self.size)
+        return x >= 0 and x <= self.size and y >= 0 and y <= self.size

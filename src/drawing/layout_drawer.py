@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from drawing.image import Image
 import numpy as np
 from drawing.map_operations import invert, to_byte
-from drawing.color_palettes import seaborn_like_128
+from drawing.color_palettes import seaborn_like_128, seaborn_like_250
 from layout.base import Layout
 
 if TYPE_CHECKING:
@@ -54,11 +54,18 @@ class LayoutDrawer:
 
 class HillLayoutDrawer(LayoutDrawer):
 
+    def __init__(self, layout: Layout, draw_nodes=True, draw_edges=True, draw_lables=True, scale=True) -> None:
+        super().__init__(layout, draw_nodes, draw_edges, draw_lables)
+        self.scale = scale
+
     def init_image(self) -> Image:
-        hm = self.layout._height_map
-        min_value = np.min(hm)
-        max_val = np.max(hm)
-        scaled = (hm - min_value) / max_val
+        if self.scale:
+            hm = self.layout._height_map
+            min_value = np.min(hm)
+            max_val = np.max(hm)
+            scaled = (hm - min_value) / max_val
+        else:
+            scaled = self.layout._height_map
         return Image(self.layout.size, init_data=scaled).as_byte_image().as_pallete(seaborn_like_128)
 
     def draw_edge(self, image, start, end, weight):
@@ -71,9 +78,9 @@ class HillLayoutDrawer(LayoutDrawer):
 
 class AlphaHillLayoutDrawer(LayoutDrawer):
 
-    def __init__(self, layout: Layout, draw_nodes=True, draw_edges=True, draw_lables=True) -> None:
+    def __init__(self, layout: Layout, draw_nodes=True, draw_edges=True, draw_lables=True, scale=True) -> None:
         super().__init__(layout, draw_nodes, draw_edges, draw_lables)
-        self.__hill_drawer = HillLayoutDrawer(layout, False, False, False)
+        self.__hill_drawer = HillLayoutDrawer(layout, False, False, False, scale=scale)
         self.__drawer = LayoutDrawer(layout, draw_nodes, draw_edges, draw_lables)
 
     def draw(self):

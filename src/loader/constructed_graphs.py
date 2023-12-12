@@ -32,3 +32,11 @@ def many_centers_connected(orbit_count, regions):
                 continue
             g.add_edge(f"{start}-center", f"{end}-center", weight=R.random())
     return g
+
+
+
+def barbell(n, m):
+    dg: nx.DiGraph= nx.barbell_graph(n, m).to_directed()
+    for u, v, data in dg.edges(data=True):
+        data["weight"] = R.random()
+    return dg

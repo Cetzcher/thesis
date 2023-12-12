@@ -51,6 +51,13 @@ class Graph:
         except TypeError:
             return self.__probabilites[nodes]
 
+    def normalize_probs(self):
+        keys, values = self.probabilites.keys(), self.probabilites.values()
+        prob = np.array(values)
+        min_prob = np.min(prob)
+        max_prob = np.max(prob)
+        self.__probabilites = dict(zip(keys, values))
+
     @property
     def seeds(self):
         return self.__seed_nodes
@@ -96,6 +103,10 @@ class Graph:
     @property
     def path_probabilities(self):
         return self.__probabilites_along_paths
+    
+    @property
+    def path_probabilites_reversed(self):
+        return self.__probabilites_along_paths_reversed
 
     def has_edge(self, u, v):
         return self.__raw.has_edge(u, v)
