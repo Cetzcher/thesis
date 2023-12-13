@@ -1,11 +1,11 @@
 from layout.height_map_layout import HeightMapLayout
 import networkx as nx
 import math
-from drawing.kernels import circle
+from drawing.kernels import cricle_with_overflow, errode
 
     
 
-class SpringHillLayout(HeightMapLayout):
+class SpringHillLayoutErrosion(HeightMapLayout):
 
 
     def __init__(self, graph, size, **params) -> None:
@@ -38,12 +38,11 @@ class SpringHillLayout(HeightMapLayout):
         for node, pos in pos.items():
             pr = self.graph.Pr(node)
             # tweaking factor changes the results dramatically.
-            factor = self.size
-            radius = (self.size * pr) * factor
             hm_pos = scale_pos(pos)
-            circle(self._height_map, hm_pos, radius, pr * 100)           
+            cricle_with_overflow(self._height_map, hm_pos, 8, 0.6 + pr, do_errode=False)           
             out[node] = hm_pos
 
+        errode(self._height_map)
         return out
     
 

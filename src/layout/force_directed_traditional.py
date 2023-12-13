@@ -5,14 +5,15 @@ import numpy as np
 import vec
 from typing import Any
 
-class ForceDirectedLayout(HeightMapLayout):
+class ForceDirectedTraditionalLayout(HeightMapLayout):
+    """Force directed layout using just the edge weights and using only connected nodes"""
 
     def __init__(self, graph: Graph, size, **params) -> None:
         super().__init__(graph, size, **params)
         self.force = None
-        self.GRAVITY = 13
+        self.GRAVITY = 20
         self.MASS_MULT = 10
-        self.REPULSION_FORCE = 6
+        self.REPULSION_FORCE = 9
             
     def radius_from_prob(self, prob):
         return (self.size * prob) * 8
@@ -73,7 +74,7 @@ class ForceDirectedLayout(HeightMapLayout):
         force = direction * mass_diff * self.REPULSION_FORCE
         # the orignial force was constructed from node_pos to other_pos
         # sicne we want to push them apart we return it inverted
-        return -force, force 
+        return force * -1, force 
 
 
     def compute_attraction(self, node, other):
@@ -91,20 +92,13 @@ class ForceDirectedLayout(HeightMapLayout):
             else:
                 weight = conn_w
 
-        # if we have neither than we can use the path prbo weight directly
-        if weight == 0:
-            weight = self.graph.path_probabilities.get(node, {}).get(other, 0)
-
-        if weight == 0:
-            return vec.Vector2(0, 0), vec.Vector2(0, 0)
-        
         to_node = self.positions[node] - self.positions[other]
         # when weight is large that means the nodes should be close together
         # because they are simillar.
         # if it is small they should be further apart
-        ideal_distance = clamp(8, self.size, weight * self.size)
+        ideal_distance = clamp(8, self.size, 1/weight,)
         to_node_distance = vec_len(to_node)
-        factor = (to_node_distance + 0.00001) / ideal_distance
+        factor = ideal_distance / (to_node_distance + 0.00001)
         direction = vec.Vector2(*vec_norm(to_node))
         return -direction * factor, direction * factor
 
